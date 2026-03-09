@@ -1,53 +1,58 @@
-<!DOCTYPE html>
+{% load static %}
+<!doctype html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}Мой Блог{% endblock %}</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-</head>
-<body>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
     <!-- Навигация -->
     <nav class="navbar">
-    <div class="container">
+      <div class="container">
         <a href="{% url 'blog:post_list' %}" class="logo">📝 Мой Блог</a>
         <div class="nav-links">
-            <a href="{% url 'blog:post_list' %}">Посты</a>
-            {% if user.is_authenticated %}
-                <a href="{% url 'blog:post_create' %}">Создать пост</a>
-                <span class="user-info">👤 {{ user.username }}</span>
-                <!-- ✅ Исправлено: blog:logout -->
-                <a href="{% url 'blog:logout' %}" class="btn-logout">Выйти</a>
-            {% else %}
-                <!-- ✅ Исправлено: blog:login -->
-                <a href="{% url 'blog:login' %}" class="btn-login">Войти</a>
-            {% endif %}
+          <a href="{% url 'blog:post_list' %}">Посты</a>
+          {% if user.is_authenticated %}
+          <a href="{% url 'blog:post_create' %}">Создать пост</a>
+          <span class="user-info">👤 {{ user.username }}</span>
+          <!-- ✅ Исправлено: blog:logout -->
+          <a href="{% url 'blog:logout' %}" class="btn-logout">Выйти</a>
+          {% else %}
+          <!-- ✅ Исправлено: blog:login -->
+          <a href="{% url 'blog:login' %}" class="btn-login">Войти</a>
+          {% endif %} {% if user.is_staff or user.is_superuser %}
+          <a
+            href="{% url 'blog:category_list' %}"
+            style="color: #007bff; text-decoration: none; margin-right: 15px"
+            >📁 Категории</a
+          >
+          {% endif %}
         </div>
-    </div>
-</nav>
+      </div>
+    </nav>
 
     <!-- Основной контент -->
     <main class="container">
-        {% if messages %}
-            <div class="messages">
-                {% for message in messages %}
-                    <div class="message message-{{ message.tags }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-
-        {% block content %}{% endblock %}
+      {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+        <div class="message message-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %} {% block content %}{% endblock %}
     </main>
 
     <!-- Подвал -->
     <footer class="footer">
-        <div class="container">
-            <p>&copy; 2026 Мой Блог. Все права защищены.</p>
-        </div>
+      <div class="container">
+        <p>&copy; 2026 Мой Блог. Все права защищены.</p>
+      </div>
     </footer>
-</body>
+  </body>
 </html>

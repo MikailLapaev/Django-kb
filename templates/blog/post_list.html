@@ -1,42 +1,76 @@
 {% extends 'base.html' %}
 
-{% block content %}
-<h1>Список постов</h1>
+{% block title %}Посты{% endblock %}
 
-<div class="posts">
-    {% for post in page_obj %}
-    <article class="post">
-        <h2><a href="{% url 'blog:post_detail' post.pk %}">{{ post.title }}</a></h2>
-        <p class="meta">
-            Автор: {{ post.author.username }} | 
-            Категория: {{ post.category.name }} | 
-            Дата: {{ post.created_at|date:"d.m.Y H:i" }}
-        </p>
-        <p>{{ post.content|truncatewords:30 }}</p>
-    </article>
-    {% empty %}
-    <p>Постов пока нет</p>
-    {% endfor %}
+{% block content %}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1 style="margin: 0;">Посты</h1>
+    {% if user.is_authenticated %}
+        <a href="{% url 'blog:post_create' %}" style="display: inline-block; padding: 10px 20px; background: #28a745; color: #fff; text-decoration: none; border-radius: 4px;">+ Новый пост</a>
+    {% endif %}
 </div>
 
-<!-- ПАГИНАЦИЯ -->
+<!-- Отладка (можно удалить потом) -->
+<div style="background: #e3f2fd; padding: 10px; margin-bottom: 20px; border-radius: 4px; font-size: 0.9em;">
+    📊 Всего: {{ paginator.count }} | Страница {{ page_obj.number }} из {{ paginator.num_pages }}
+</div>
+
+<!-- Список постов -->
+{% for post in page_obj %}
+<div style="background: #fff; border: 1px solid #ddd; padding: 20px; margin-bottom: 15px; border-radius: 8px;">
+    
+    <!-- Заголовок и кнопки управления -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+        <h3 style="margin: 0;">
+            <a href="{% url 'blog:post_detail' post.pk %}" style="color: #333; text-decoration: none;">{{ post.title }}</a>
+        </h3>
+        
+        <!-- Кнопки редактирования/удаления (только автор или админ) -->
+        {% if user.is_authenticated and user == post.author or user.is_staff %}
+        <div >
+            <a href="{% url 'blog:post_edit' post.pk %}" class="btn btn-outline">✏️ Редактировать</a>
+            <a href="{% url 'blog:post_delete' post.pk %}" class="btn btn-sm">🗑️ Удалить</a>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Мета-информация -->
+    <p style="color: #666; font-size: 0.9em; margin: 10px 0;">
+        👤 {{ post.author.username }} • 📅 {{ post.created_at|date:"d.m.Y H:i" }}
+        {% if post.category %}• 📁 {{ post.category.name }}{% endif %}
+    </p>
+    
+    <!-- Краткое содержание -->
+    <p style="color: #444; line-height: 1.6; margin: 15px 0;">{{ post.content|truncatewords:30 }}</p>
+    
+    <!-- Кнопка читать далее -->
+    <a href="{% url 'blog:post_detail' post.pk %}" style="display: inline-block; padding: 8px 16px; background: #007bff; color: #fff; text-decoration: none; border-radius: 4px;">Читать далее →</a>
+</div>
+
+{% empty %}
+<div style="background: #fff; border: 1px solid #ddd; padding: 40px; text-align: center; border-radius: 8px;">
+    <p style="color: #666; font-size: 1.1em; margin: 0 0 20px;">Постов пока нет</p>
+    {% if user.is_authenticated %}
+        <a href="{% url 'blog:post_create' %}" style="display: inline-block; padding: 10px 20px; background: #28a745; color: #fff; text-decoration: none; border-radius: 4px;">Создать первый пост</a>
+    {% endif %}
+</div>
+{% endfor %}
+
+<!-- Пагинация -->
 {% if paginator.num_pages > 1 %}
-<div class="pagination">
-    <span class="step-links">
-        {% if page_obj.has_previous %}
-            <a href="?page=1">&laquo; Первая</a>
-            <a href="?page={{ page_obj.previous_page_number }}">Пред.</a>
-        {% endif %}
-
-        <span class="current">
-            Страница {{ page_obj.number }} из {{ paginator.num_pages }}
-        </span>
-
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">След.</a>
-            <a href="?page={{ paginator.num_pages }}">Последняя &raquo;</a>
-        {% endif %}
-    </span>
+<div style="text-align: center; margin: 30px 0; padding: 20px; background: #fff; border: 1px solid #ddd; border-radius: 8px;">
+    {% if page_obj.has_previous %}
+        <a href="?page=1" style="display: inline-block; margin: 0 5px; padding: 8px 12px; background: #fff; border: 1px solid #ddd; text-decoration: none; color: #333; border-radius: 4px;">« Первая</a>
+        <a href="?page={{ page_obj.previous_page_number }}" style="display: inline-block; margin: 0 5px; padding: 8px 12px; background: #fff; border: 1px solid #ddd; text-decoration: none; color: #333; border-radius: 4px;">‹ Пред.</a>
+    {% endif %}
+    
+    <span style="display: inline-block; margin: 0 15px; padding: 8px 12px; font-weight: bold;">{{ page_obj.number }} из {{ paginator.num_pages }}</span>
+    
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" style="display: inline-block; margin: 0 5px; padding: 8px 12px; background: #fff; border: 1px solid #ddd; text-decoration: none; color: #333; border-radius: 4px;">След. ›</a>
+        <a href="?page={{ paginator.num_pages }}" style="display: inline-block; margin: 0 5px; padding: 8px 12px; background: #fff; border: 1px solid #ddd; text-decoration: none; color: #333; border-radius: 4px;">Последняя »</a>
+    {% endif %}
 </div>
 {% endif %}
 

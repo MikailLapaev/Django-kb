@@ -1,21 +1,22 @@
 from django import forms
-from .models import Post
+from .models import Post, Comment
+
 
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'category', 'content']
+        fields = ['title', 'content', 'category']
         widgets = {
-            'title': forms.TextInput(attrs={
-                'placeholder': 'Введите заголовок поста',
-                'class': 'form-input'
-            }),
-            'category': forms.Select(attrs={
-                'class': 'form-input'
-            }),
-            'content': forms.Textarea(attrs={
-                'placeholder': 'Напишите содержание поста...',
-                'class': 'form-textarea',
-                'rows': 10
-            }),
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 10}),
+            'category': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }

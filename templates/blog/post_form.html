@@ -1,47 +1,36 @@
 {% extends 'base.html' %}
 
-{% block title %}{% if form.instance.pk %}Редактировать пост{% else %}Создать пост{% endif %}{% endblock %}
+{% block title %}{% if form.instance.pk %}Редактировать{% else %}Создать{% endif %} пост{% endblock %}
 
 {% block content %}
-<div class="form-container">
-    <h1 class="form-title">
-        {% if form.instance.pk %}✏️ Редактировать пост{% else %}➕ Создать пост{% endif %}
-    </h1>
-    
-    <form method="post">
-        {% csrf_token %}
-        
-        <div class="form-group">
-            <label for="{{ form.title.id_for_label }}">Заголовок *</label>
-            {{ form.title }}
-            {% if form.title.errors %}
-            <div class="message message-error">{{ form.title.errors }}</div>
-            {% endif %}
-        </div>
-        
-        <div class="form-group">
-            <label for="{{ form.category.id_for_label }}">Категория *</label>
-            {{ form.category }}
-            {% if form.category.errors %}
-            <div class="message message-error">{{ form.category.errors }}</div>
-            {% endif %}
-        </div>
-        
-        <div class="form-group">
-            <label for="{{ form.content.id_for_label }}">Содержание *</label>
-            {{ form.content }}
-            {% if form.content.errors %}
-            <div class="message message-error">{{ form.content.errors }}</div>
-            {% endif %}
-        </div>
-        
-        <button type="submit" class="btn-submit">
-            {% if form.instance.pk %}Сохранить изменения{% else %}Опубликовать{% endif %}
-        </button>
-    </form>
-    
-    <div style="margin-top: 20px; text-align: center;">
-        <a href="{% url 'blog:post_list' %}">← Отмена</a>
-    </div>
+<h1>{% if form.instance.pk %}Редактирование{% else %}Создание{% endif %} поста</h1>
+
+{% if is_admin %}
+<div style="background: #d4edda; padding: 10px 15px; margin-bottom: 20px; border-radius: 4px; color: #155724;">
+    ✓ Администратор: безлимитная публикация | <a href="{% url 'blog:category_create' %}" style="color: #155724;">+ Добавить категорию</a>
 </div>
+{% endif %}
+
+<form method="post" style="background: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+    {% csrf_token %}
+    
+    <div style="margin-bottom: 20px;">
+        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Заголовок</label>
+        {{ form.title }}
+    </div>
+    
+    <div style="margin-bottom: 20px;">
+        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Категория</label>
+        {{ form.category }}
+        <small style="color: #666;">Только администратор может добавлять новые категории</small>
+    </div>
+    
+    <div style="margin-bottom: 20px;">
+        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Содержание</label>
+        {{ form.content }}
+    </div>
+    
+    <button type="submit" style="padding: 10px 20px; background: #007bff; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Сохранить</button>
+    <a href="{% url 'blog:post_list' %}" style="display: inline-block; margin-left: 10px; padding: 10px 20px; background: #6c757d; color: #fff; text-decoration: none; border-radius: 4px;">Отмена</a>
+</form>
 {% endblock %}
