@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<article class="post" style="padding: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+        <h1 style="font-size: 1.5rem; font-weight: 600; margin: 0;">{{ post.title }}</h1>
+        
+        <!-- Кнопки управления (только для автора/админа/модератора) -->
+        {% if user == post.author or user.is_staff or user.is_superuser or user in post.category.moderators.all %}
+        <div style="display: flex; gap: 0.5rem;">
+            <a href="{% url 'blog:post_edit' post.pk %}" class="btn btn-outline btn-sm">
+                Редактировать
+            </a>
+            <a href="{% url 'blog:post_delete' post.pk %}" class="btn btn-sm" style="background: #fee2e2; color: #dc2626; border-color: #fca5a5;">
+                Удалить
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="post-meta mb-3">
+        <strong>{{ post.author.username }}</strong>
+        <span> • </span>
+        <span>{{ post.created_at|date:"d.m.Y H:i" }}</span>
+        {% if post.category %}
+        <span> • </span>
+        <span>{{ post.category.name }}</span>
+        {% endif %}
+    </div>
+    
+    <div style="line-height: 1.7; margin-bottom: 2rem;">
+        {{ post.content|linebreaks }}
+    </div>
+    
+    <a href="{% url 'blog:post_list' %}" class="btn btn-outline btn-sm">
+        ← Назад к списку
+    </a>
+</article>
+
+<!-- Комментарии (опционально) -->
+{% if post.comments.exists %}
+<div style="margin-top: 2rem;">
+    <h3 style="font-size: 1.125rem; margin-bottom: 1rem;">Комментарии ({{ post.comments.count }})</h3>
+    {% for comment in post.comments.all %}
+    <div class="card mb-2" style="padding: 1rem;">
+        <div style="font-size: 0.875rem; color: #64748b; margin-bottom: 0.5rem;">
+            <strong>{{ comment.author.username }}</strong> • {{ comment.created_at|date:"d.m.Y H:i" }}
+        </div>
+        <div>{{ comment.content }}</div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

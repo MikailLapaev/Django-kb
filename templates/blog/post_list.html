@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Список постов</h1>
+
+<div class="posts">
+    {% for post in page_obj %}
+    <article class="post">
+        <h2><a href="{% url 'blog:post_detail' post.pk %}">{{ post.title }}</a></h2>
+        <p class="meta">
+            Автор: {{ post.author.username }} | 
+            Категория: {{ post.category.name }} | 
+            Дата: {{ post.created_at|date:"d.m.Y H:i" }}
+        </p>
+        <p>{{ post.content|truncatewords:30 }}</p>
+    </article>
+    {% empty %}
+    <p>Постов пока нет</p>
+    {% endfor %}
+</div>
+
+<!-- ПАГИНАЦИЯ -->
+{% if paginator.num_pages > 1 %}
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; Первая</a>
+            <a href="?page={{ page_obj.previous_page_number }}">Пред.</a>
+        {% endif %}
+
+        <span class="current">
+            Страница {{ page_obj.number }} из {{ paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">След.</a>
+            <a href="?page={{ paginator.num_pages }}">Последняя &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+{% endif %}
+
+{% endblock %}
