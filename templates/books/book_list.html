@@ -1,0 +1,96 @@
+{% extends 'home.html' %}
+
+{% block title %}Список книг{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>📖 Список книг</h1>
+    {% if user.is_authenticated %}
+        <a href="{% url 'book_create' %}" class="btn btn-gradient">➕ Добавить книгу</a>
+    {% endif %}
+</div>
+
+<div class="row">
+    {% for book in books %}
+    <div class="col-md-4 mb-4">
+        <div class="card book-card">
+            <div class="card-body">
+                <h5 class="card-title text-primary">{{ book.title }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">✍️ {{ book.author }}</h6>
+                <p class="card-text">
+                    <span class="badge bg-info">{{ book.genre.name }}</span>
+                </p>
+                <p class="card-text text-truncate">{{ book.description|default:"Нет описания" }}</p>
+                
+                <!-- Кнопки действий -->
+                <div class="d-flex gap-2 mt-3">
+                    <a href="{% url 'book_detail' book.pk %}" class="btn btn-outline-primary btn-sm flex-grow-1">
+                        <i class="bi bi-eye"></i> Подробнее
+                    </a>
+                    {% if user == book.owner or user.is_superuser or is_admin %}
+                        <a href="{% url 'book_update' book.pk %}" class="btn btn-outline-warning btn-sm" title="Редактировать">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="{% url 'book_delete' book.pk %}" class="btn btn-outline-danger btn-sm" title="Удалить">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-footer text-muted small d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-calendar"></i> {{ book.created_at|date:"d.m.Y" }}</span>
+                {% if book.owner %}
+                    <span><i class="bi bi-person"></i> {{ book.owner.username }}</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info text-center">
+            📭 Книг пока нет. <a href="{% url 'book_create' %}" class="alert-link">Добавьте первую!</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if is_paginated %}
+<nav aria-label="Пагинация" class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1"><i class="bi bi-chevron-double-left"></i></a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}"><i class="bi bi-chevron-left"></i> Назад</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link"><i class="bi bi-chevron-double-left"></i></span>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link"><i class="bi bi-chevron-left"></i> Назад</span>
+            </li>
+        {% endif %}
+        <li class="page-item disabled">
+            <span class="page-link">Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+        </li>
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Вперёд <i class="bi bi-chevron-right"></i></a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}"><i class="bi bi-chevron-double-right"></i></a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Вперёд <i class="bi bi-chevron-right"></i></span>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link"><i class="bi bi-chevron-double-right"></i></span>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'home.html' %}
+
+{% block title %}API Документация{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">📡 API Документация</h1>
+
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">1️⃣ Регистрация пользователя</div>
+    <div class="card-body">
+        <p><strong>POST</strong> <code>/api/register/</code></p>
+        <pre class="bg-dark text-white p-3 rounded">
+{
+    "username": "testuser",
+    "email": "test@example.com",
+    "password1": "securepassword123",
+    "password2": "securepassword123"
+}</pre>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-success text-white">2️⃣ Получение JWT токена</div>
+    <div class="card-body">
+        <p><strong>POST</strong> <code>/api/token/</code></p>
+        <pre class="bg-dark text-white p-3 rounded">
+{
+    "username": "testuser",
+    "password": "securepassword123"
+}</pre>
+        <p class="text-muted mt-2">Ответ: <code>{"access": "...", "refresh": "..."}</code></p>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-info text-white">3️⃣ Список книг</div>
+    <div class="card-body">
+        <p><strong>GET</strong> <code>/api/books/</code></p>
+        <p>Заголовок: <code>Authorization: Bearer &lt;access_token&gt;</code></p>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-warning">4️⃣ Создание книги</div>
+    <div class="card-body">
+        <p><strong>POST</strong> <code>/api/books/</code></p>
+        <pre class="bg-dark text-white p-3 rounded">
+{
+    "title": "Новая книга",
+    "author": "Автор",
+    "genre_id": 1,
+    "description": "Описание книги"
+}</pre>
+    </div>
+</div>
+
+<div class="text-center mt-4">
+    <a href="{% url 'book_list' %}" class="btn btn-primary">📚 На сайт</a>
+    <a href="/admin/" class="btn btn-dark">⚙️ Админ-панель</a>
+</div>
+{% endblock %}

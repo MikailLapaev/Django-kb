@@ -1,0 +1,12 @@
+{% extends 'home.html' %}
+
+{% block title %}Выход{% endblock %}
+
+{% block content %}
+<div class="text-center mt-5">
+    <h1>👋 Вы вышли из системы</h1>
+    <p class="lead">До скорой встречи!</p>
+    <a href="{% url 'login' %}" class="btn btn-primary">Войти снова</a>
+    <a href="{% url 'book_list' %}" class="btn btn-secondary">На главную</a>
+</div>
+{% endblock %}

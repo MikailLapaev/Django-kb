@@ -1,0 +1,42 @@
+{% extends 'home.html' %}
+
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block content %}
+<div class="card shadow-lg">
+    <div class="card-header bg-primary text-white">
+        <h2 class="mb-0">📖 {{ book.title }}</h2>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered">
+            <tr>
+                <th width="200">Автор</th>
+                <td>✍️ {{ book.author }}</td>
+            </tr>
+            <tr>
+                <th>Жанр</th>
+                <td><span class="badge bg-info">{{ book.genre.name }}</span></td>
+            </tr>
+            <tr>
+                <th>Описание</th>
+                <td>{{ book.description|linebreaks|default:"Нет описания" }}</td>
+            </tr>
+            <tr>
+                <th>Дата создания</th>
+                <td>📅 {{ book.created_at|date:"d.m.Y H:i" }}</td>
+            </tr>
+            <tr>
+                <th>Владелец</th>
+                <td>👤 {{ book.owner.username|default:"Аноним" }}</td>
+            </tr>
+        </table>
+        <div class="mt-4">
+            {% if user == book.owner or user.is_superuser %}
+                <a href="{% url 'book_update' book.pk %}" class="btn btn-warning">✏️ Редактировать</a>
+                <a href="{% url 'book_delete' book.pk %}" class="btn btn-danger">🗑️ Удалить</a>
+            {% endif %}
+            <a href="{% url 'book_list' %}" class="btn btn-secondary">← Назад к списку</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

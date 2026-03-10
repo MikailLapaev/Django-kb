@@ -1,0 +1,37 @@
+{% extends 'home.html' %}
+
+{% block title %}Удаление жанра{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Подтверждение удаления</h4>
+            </div>
+            <div class="card-body">
+                <p class="lead">Вы уверены, что хотите удалить жанр:</p>
+                <h3 class="text-danger">"{{ object.name }}"</h3>
+                {% if object.books.count > 0 %}
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-circle"></i> 
+                    В этом жанре есть <strong>{{ object.books.count }}</strong> книг!
+                </div>
+                {% endif %}
+                <p class="text-muted">Это действие нельзя отменить!</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Да, удалить
+                        </button>
+                        <a href="{% url 'genre_list' %}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Отмена
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
