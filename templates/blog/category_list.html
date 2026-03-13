@@ -12,7 +12,7 @@
     {% for category in categories %}
     <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #eee;">
         <div>
-            <strong style="font-size: 1.1em;">{{ category.name }}</strong>
+            <strong style="font-size: 1.1em; color: #3d3d3d;">{{ category.name }}</strong>
             <span style="color: #666; margin-left: 10px;">({{ category.posts.count }} постов)</span>
         </div>
         <a href="{% url 'blog:category_delete' category.pk %}" style="padding: 5px 12px; background: #dc3545; color: #fff; text-decoration: none; border-radius: 4px; font-size: 0.85em;">🗑️ Удалить</a>

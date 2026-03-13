@@ -1,7 +1,8 @@
+# config/settings.py
 import os
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent  # Исправлено: __file__ вместо file
 
 SECRET_KEY = 'django-insecure-your-key-here'
 DEBUG = True
@@ -84,3 +85,22 @@ REST_FRAMEWORK = {
 LOGIN_URL = 'blog:login'
 LOGIN_REDIRECT_URL = 'blog:post_list'
 LOGOUT_REDIRECT_URL = 'blog:post_list'
+
+# Разрешённые домены email (Яндекс, Mail.ru, Gmail и официальные)
+ALLOWED_EMAIL_DOMAINS = [
+    'yandex.ru',
+    'yandex.com',
+    'ya.ru',
+    'mail.ru',
+    'inbox.ru',
+    'list.ru',
+    'bk.ru',
+    'gmail.com',
+    'example.com',
+    'company.org',
+    'outlook.com',
+    'hotmail.com',
+    'icloud.com',
+    'protonmail.com',
+    'tutanota.com'
+]
