@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Books</title>
+</head>
+<body>
+
+<h1>Список книг</h1>
+
+<ul>
+    {% for book in books %}
+        <li>
+            {{ book.title }} — {{ book.publication_year }}
+        </li>
+    {% empty %}
+        <li>Книг пока нет</li>
+    {% endfor %}
+</ul>
+
+</body>
+</html>
