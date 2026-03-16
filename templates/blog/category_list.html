@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Категории{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1 style="margin: 0;">Категории</h1>
+    <a href="{% url 'blog:category_create' %}" style="display: inline-block; padding: 10px 20px; background: #28a745; color: #fff; text-decoration: none; border-radius: 4px;">+ Новая категория</a>
+</div>
+
+<div style="background: #fff; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+    {% for category in categories %}
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #eee;">
+        <div>
+            <strong style="font-size: 1.1em; color: #3d3d3d;">{{ category.name }}</strong>
+            <span style="color: #666; margin-left: 10px;">({{ category.posts.count }} постов)</span>
+        </div>
+        <a href="{% url 'blog:category_delete' category.pk %}" style="padding: 5px 12px; background: #dc3545; color: #fff; text-decoration: none; border-radius: 4px; font-size: 0.85em;">🗑️ Удалить</a>
+    </div>
+    {% empty %}
+    <div style="padding: 30px; text-align: center; color: #666;">
+        Категорий пока нет
+    </div>
+    {% endfor %}
+</div>
+
+<a href="{% url 'blog:post_list' %}" style="display: inline-block; margin-top: 20px; padding: 8px 16px; background: #6c757d; color: #fff; text-decoration: none; border-radius: 4px;">← Назад к постам</a>
+{% endblock %}
