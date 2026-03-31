@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BlogPlatform{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header class="navbar">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'blog:post_list' %}">BlogPlatform</a>
+            <div class="nav-links">
+                <a href="{% url 'blog:post_list' %}">Главная</a>
+                <a href="{% url 'blog:post_list' %}">Посты</a>
+                {% if user.is_authenticated %}
+                <a href="{% url 'blog:post_create' %}">Создать</a>
+                {% endif %}
+                {% if user.is_staff %}
+                <a href="{% url 'blog:category_list' %}">Категории</a>
+                <a href="/admin/">Админка</a>
+                {% endif %}
+                {% if user.is_authenticated %}
+                <span class="user-name">{{ user.username }}</span>
+                <a href="{% url 'blog:logout' %}">Выйти</a>
+                {% else %}
+                <a href="{% url 'blog:login' %}" class="btn btn-outline btn-sm">Войти</a>
+                <a href="{% url 'blog:register' %}" class="btn btn-primary btn-sm">Регистрация</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    {% if messages %}
+    <div class="messages container">
+        {% for message in messages %}
+        <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>BlogPlatform © {% now "Y" %}. Все права защищены</p>
+            <div class="footer-links">
+                <a href="#">Помощь</a>
+                <a href="#">Условия</a>
+                <a href="#">Конфиденциальность</a>
+                <a href="#">Контакты</a>
+            </div>
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

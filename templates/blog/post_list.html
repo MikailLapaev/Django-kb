@@ -1,0 +1,251 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load cache %}
+
+{% block title %}Главная - BlogPlatform{% endblock %}
+
+{% block content %}
+
+<!-- 🔍 ИНДИКАТОР КЭША (для отладки) -->
+<div style="
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: #ff6b6b;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    z-index: 9999;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+">
+    🕐 <b>Время:</b> {{ cache_time|time:"H:i:s" }}<br>
+    <small>F5 для проверки</small>
+</div>
+
+<!-- Hero секция -->
+<section class="hero py-5 mb-4">
+    <div class="container text-center animate-fade">
+        <h1 class="card-title mb-3">Добро пожаловать в BlogPlatform</h1>
+        <p class="text-muted mb-4" style="max-width: 600px; margin: 0 auto;">
+            Платформа для блогеров из Казани. Делитесь своими мыслями, 
+            находите единомышленников и создавайте контент вместе с нами.
+        </p>
+        
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            {% if user.is_authenticated %}
+                <a href="{% url 'blog:post_create' %}" class="btn btn-primary btn-pulse">
+                    ✍️ Создать пост
+                </a>
+            {% else %}
+                <a href="{% url 'blog:register' %}" class="btn btn-primary">
+                    🚀 Начать блог
+                </a>
+            {% endif %}
+            <a href="#about" class="btn btn-outline">Узнать больше ↓</a>
+        </div>
+    </div>
+</section>
+
+<!-- 🔥 Статистика - КЭШ 5 минут (300 сек) -->
+{% cache 300 homepage_stats user.is_authenticated %}
+<section class="stats-section mb-5">
+    <div class="container">
+        <div class="card" style="padding: 20px;">
+            <div class="row text-center g-3">
+                <div class="col-6 col-md-2">
+                    <div class="stat-item animate-fade-up">
+                        <div class="stat-value fw-bold text-primary fs-4">{{ statistics.total_users }}</div>
+                        <div class="stat-label text-muted small">Пользователей</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="stat-item animate-fade-up delay-100">
+                        <div class="stat-value fw-bold text-primary fs-4">{{ statistics.total_posts }}</div>
+                        <div class="stat-label text-muted small">Публикаций</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="stat-item animate-fade-up delay-200">
+                        <div class="stat-value fw-bold text-primary fs-4">{{ statistics.total_comments }}</div>
+                        <div class="stat-label text-muted small">Комментариев</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="stat-item animate-fade-up delay-300">
+                        <div class="stat-value fw-bold text-primary fs-4">{{ statistics.total_views|default:0 }}</div>
+                        <div class="stat-label text-muted small">Просмотров</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="stat-item animate-fade-up delay-400">
+                        <div class="stat-value fw-bold text-primary fs-4">{{ statistics.posts_today }}</div>
+                        <div class="stat-label text-muted small">Постов сегодня</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="stat-item animate-fade-up delay-500">
+                        <div class="stat-value fw-bold text-primary fs-4">{{ statistics.active_users }}</div>
+                        <div class="stat-label text-muted small">Активных авторов</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endcache %}
+
+<!-- 🔥 О платформе - КЭШ 10 минут (600 сек) -->
+{% cache 600 about_section %}
+<section id="about" class="about-section mb-5">
+    <div class="container">
+        <div class="card animate-fade-up">
+            <h2 class="card-title">📖 О платформе</h2>
+            <p class="text-muted mb-4">
+                BlogPlatform — это современное пространство для авторов из Казани и Республики Татарстан. 
+                Мы создали удобную платформу, где каждый может поделиться своими идеями, 
+                найти аудиторию и стать частью растущего сообщества блогеров.
+            </p>
+            
+            <div class="row g-3">
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="feature-item text-center p-3">
+                        <div class="feature-icon fs-3 mb-2">✨</div>
+                        <div class="feature-text small fw-medium">Бесплатная публикация</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="feature-item text-center p-3">
+                        <div class="feature-icon fs-3 mb-2">📝</div>
+                        <div class="feature-text small fw-medium">Удобный редактор</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="feature-item text-center p-3">
+                        <div class="feature-icon fs-3 mb-2">💬</div>
+                        <div class="feature-text small fw-medium">Комментарии</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="feature-item text-center p-3">
+                        <div class="feature-icon fs-3 mb-2">🏷️</div>
+                        <div class="feature-text small fw-medium">Категории и теги</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="feature-item text-center p-3">
+                        <div class="feature-icon fs-3 mb-2">📱</div>
+                        <div class="feature-text small fw-medium">Адаптивный дизайн</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="feature-item text-center p-3">
+                        <div class="feature-icon fs-3 mb-2">🛟</div>
+                        <div class="feature-text small fw-medium">Поддержка 24/7</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endcache %}
+
+<!-- 🔥 Список постов - КЭШ 2 минуты (120 сек) -->
+{% cache 120 post_list_page page_obj.number user.is_authenticated %}
+<section class="posts-section">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="card-title mb-0">📰 Последние публикации</h2>
+            {% if user.is_authenticated %}
+                <a href="{% url 'blog:post_create' %}" class="btn btn-sm btn-outline">+ Новый пост</a>
+            {% endif %}
+        </div>
+        
+        {% for post in page_obj %}
+        <article class="post animate-fade-up" style="animation-delay: {{ forloop.counter0|add:1 }}00ms">
+            <div class="post-accent"></div>
+            
+            <h3 class="post-title">
+                <a href="{% url 'blog:post_detail' post.pk %}">{{ post.title }}</a>
+            </h3>
+            
+            <div class="post-meta">
+                <span class="post-author">👤 {{ post.author.username }}</span>
+                <span class="post-date">📅 {{ post.created_at|date:"d.m.Y H:i" }}</span>
+                <span class="post-views">👁️ {{ post.views }} просмотров</span>
+                {% if post.category %}
+                    <span class="post-category badge bg-primary-light text-primary">
+                        📁 {{ post.category.name }}
+                    </span>
+                {% endif %}
+            </div>
+            
+            <p class="post-excerpt">
+                {{ post.content|truncatewords:30 }}
+            </p>
+            
+            <div class="post-footer">
+                <a href="{% url 'blog:post_detail' post.pk %}" class="btn btn-sm btn-outline">
+                    Читать далее →
+                </a>
+                <span class="text-muted small">
+                    💬 {{ post.comments.count }} комментариев
+                </span>
+            </div>
+        </article>
+        {% empty %}
+        <div class="card text-center py-5 animate-fade">
+            <div class="fs-1 mb-3">📭</div>
+            <h3 class="card-title">Публикаций пока нет</h3>
+            <p class="text-muted mb-4">
+                {% if user.is_authenticated %}
+                    Будьте первым — создайте пост и начните делиться своими идеями!
+                {% else %}
+                    Зарегистрируйтесь, чтобы начать публиковать контент.
+                {% endif %}
+            </p>
+            {% if user.is_authenticated %}
+                <a href="{% url 'blog:post_create' %}" class="btn btn-primary">
+                    ✍️ Создать первый пост
+                </a>
+            {% else %}
+                <a href="{% url 'blog:register' %}" class="btn btn-primary">
+                    🚀 Зарегистрироваться
+                </a>
+            {% endif %}
+        </div>
+        {% endfor %}
+        
+        <!-- Пагинация -->
+        {% if paginator.num_pages > 1 %}
+        <nav class="pagination" aria-label="Навигация по страницам">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}" aria-label="Предыдущая страница">← Назад</a>
+            {% else %}
+                <span class="disabled">← Назад</span>
+            {% endif %}
+            
+            {% for num in paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <span class="current">{{ num }}</span>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a href="?page={{ num }}">{{ num }}</a>
+                {% elif num == 1 or num == paginator.num_pages %}
+                    <a href="?page={{ num }}">{{ num }}</a>
+                {% elif num == page_obj.number|add:'-3' or num == page_obj.number|add:'3' %}
+                    <span class="disabled">…</span>
+                {% endif %}
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" aria-label="Следующая страница">Вперёд →</a>
+            {% else %}
+                <span class="disabled">Вперёд →</span>
+            {% endif %}
+        </nav>
+        {% endif %}
+    </div>
+</section>
+{% endcache %}
+
+{% endblock %}

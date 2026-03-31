@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if form.instance.pk %}Редактировать{% else %}Создать{% endif %} пост{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 800px; margin: 2rem auto;">
+    <div class="card-header">
+        <h2 class="card-title">{% if form.instance.pk %}✏️ Редактирование{% else %}➕ Создание{% endif %} поста</h2>
+    </div>
+    
+    {% if is_admin %}
+    <div class="mb-3">
+        <span class="badge">✓ Администратор: безлимитная публикация</span>
+        <a href="{% url 'blog:category_create' %}" class="btn btn-sm btn-outline">+ Добавить категорию</a>
+    </div>
+    {% endif %}
+    
+    <form method="POST" novalidate>
+        {% csrf_token %}
+        
+        <div class="form-group {% if form.title.errors %}error{% endif %}">
+            <label class="form-label">Заголовок *</label>
+            {{ form.title }}
+            {% if form.title.errors %}<ul class="errorlist">{% for error in form.title.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+        
+        <div class="form-group {% if form.category.errors %}error{% endif %}">
+            <label class="form-label">Категория</label>
+            {{ form.category }}
+            {% if form.category.errors %}<ul class="errorlist">{% for error in form.category.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+        
+        <div class="form-group {% if form.content.errors %}error{% endif %}">
+            <label class="form-label">Содержание *</label>
+            {{ form.content }}
+            {% if form.content.errors %}<ul class="errorlist">{% for error in form.content.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+        
+        {% if form.non_field_errors %}
+        <div class="message error"><ul class="errorlist">{% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}</ul></div>
+        {% endif %}
+        
+        <div class="card-footer" style="border: none; padding: 0;">
+            <button type="submit" class="btn btn-primary btn-lg">Сохранить</button>
+            <a href="{% url 'blog:post_list' %}" class="btn btn-outline btn-lg">Отмена</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
