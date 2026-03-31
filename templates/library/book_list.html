@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Библиотека</title>
+    {% load cache %}
+  </head>
+  <body>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      .header {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        text-align: center;
+      }
+      .header h1 {
+        color: #667eea;
+        font-size: 2.5em;
+        margin-bottom: 10px;
+      }
+      .cache-badge {
+        display: inline-block;
+        background: #ff6b6b;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 0.9em;
+        margin-top: 15px;
+      }
+      .stats-card {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+      .stats-card h2 {
+        color: #667eea;
+        margin-bottom: 20px;
+      }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+      }
+      .stat-item {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+      }
+      .stat-value {
+        font-size: 2em;
+        font-weight: bold;
+        display: block;
+      }
+      .stat-label {
+        font-size: 0.9em;
+        opacity: 0.9;
+      }
+      .books-card {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+      .books-card h2 {
+        color: #667eea;
+        margin-bottom: 20px;
+      }
+      .book-item {
+        border: 1px solid #e0e0e0;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        transition: transform 0.2s;
+      }
+      .book-item:hover {
+        transform: translateY(-3px);
+      }
+      .book-title {
+        font-size: 1.3em;
+        color: #333;
+        margin-bottom: 10px;
+      }
+      .book-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        color: #666;
+      }
+      .genre-badge {
+        background: #667eea;
+        color: white;
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 0.85em;
+      }
+      .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 25px;
+      }
+      .pagination a,
+      .pagination span {
+        padding: 10px 18px;
+        background: #667eea;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+      }
+      .pagination a:hover {
+        background: #764ba2;
+      }
+      .pagination .current {
+        background: #764ba2;
+        font-weight: bold;
+      }
+      .admin-link {
+        display: inline-block;
+        margin-top: 20px;
+        color: #667eea;
+        text-decoration: none;
+      }
+    </style>
+    <div class="container">
+      <div class="header">
+        <h1>📚 Библиотека</h1>
+        <p>Каталог книг с кэшированием</p>
+        <div class="cache-badge">⏱️ Кэш: 60 секунд | F5 для проверки</div>
+      </div>
+
+      {% cache 300 stats_block %}
+      <div class="stats-card">
+        <h2>Статистика</h2>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-value">{{ total_books }}</span>
+            <span class="stat-label">Всего книг</span>
+          </div>
+          {% for genre, count in genre_stats.items %}
+          <div class="stat-item">
+            <span class="stat-value">{{ count }}</span>
+            <span class="stat-label">{{ genre }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endcache %}
+
+      <!-- Кэш списка книг на 2 минуты -->
+      {% cache 120 books_list page_obj.number %}
+      <div class="books-card">
+        <h2>📖 Книги</h2>
+        {% for book in books %}
+        <div class="book-item">
+          <div class="book-title">{{ book.title }}</div>
+          <div class="book-meta">
+            <span>✍️ {{ book.author }}</span>
+            <span class="genre-badge">{{ book.get_genre_display }}</span>
+            <span>📅 {{ book.created_at|date:"d.m.Y H:i" }}</span>
+          </div>
+        </div>
+        {% empty %}
+        <p style="text-align: center; padding: 50px; color: #999">
+          📭 Книг пока нет
+        </p>
+        {% endfor %} {% if is_paginated %}
+        <div class="pagination">
+          {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}">← Назад</a>
+          {% endif %}
+          <span class="current">{{ page_obj.number }}</span>
+          {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}">Вперёд →</a>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        <a href="/admin/" class="admin-link">⚙️ Админ-панель →</a>
+      </div>
+      {% endcache %}
+    </div>
+  </body>
+</html>
